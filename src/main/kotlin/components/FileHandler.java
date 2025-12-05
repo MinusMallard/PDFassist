@@ -14,7 +14,7 @@ public class FileHandler {
     private final Path pathsFileLocationPaths = Path.of("C:\\Users\\Rishav\\PDFassist\\paths.txt");
 
     private List<String> directories;
-    private List<Path> paths = new ArrayList<>();
+    private List<Path> files;
 
     public FileHandler() {
         try {
@@ -43,11 +43,6 @@ public class FileHandler {
         }
     }
 
-// This function needs to be implemented later
-//    public void removeDirectory(String dir) {
-//
-//    }
-
     public List<String> getAllDirectories() throws Exception {
         List<String> directories = new ArrayList<>();
         try (BufferedReader bf = Files.newBufferedReader(pathsFileLocationPaths, StandardCharsets.UTF_8)) {
@@ -65,16 +60,17 @@ public class FileHandler {
     }
 
     public List<Path> searchInPaths() throws Exception {
+        files = new ArrayList<>();
         for (String path: directories) {
             Path curPath = Path.of(path);
             if (Files.exists(curPath) && Files.isDirectory(curPath)) {
                 try(Stream<Path> walk = Files.walk(curPath, 1)) {
                     walk.filter(Files::isRegularFile)
                             .filter(p -> p.endsWith(".pdf"))
-                            .forEach(p ->this.paths.add(p));
+                            .forEach(p ->this.files.add(p));
                 }
             }
         }
-        return paths;
+        return files;
     }
 }

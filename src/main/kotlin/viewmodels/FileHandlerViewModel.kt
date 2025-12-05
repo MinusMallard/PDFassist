@@ -4,12 +4,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import components.FileHandler
+import kotlinx.coroutines.flow.asStateFlow
+import java.nio.file.Path
 
 class FileHandlerViewModel(): ViewModel() {
     private val fileHandler = FileHandler();
 
     private val _paths = MutableStateFlow<List<String>>(emptyList());
-    val paths: StateFlow<List<String>> = _paths;
+    val paths: StateFlow<List<String>> = _paths.asStateFlow();
+
+    private val _files = MutableStateFlow<List<Path>>(emptyList());
+    val files: StateFlow<List<Path>> = _files.asStateFlow();
 
     companion object {
 
@@ -23,10 +28,21 @@ class FileHandlerViewModel(): ViewModel() {
         }
     }
 
-    fun getPaths() {
+    fun load() {
         viewModelScope.launch {
-            _paths.value = fileHandler.allDirectories;
+            fileHandler.allDirectories;
+            fileHandler.searchInPaths();
+            getPaths();
+            getFiles();
         }
+    }
+
+    fun getPaths() {
+            _paths.value = fileHandler.allDirectories;
+    }
+
+    fun getFiles() {
+        _files.value = fileHandler.searchInPaths()
     }
 
     fun addPath(path: String) {

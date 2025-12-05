@@ -50,6 +50,7 @@ fun main() = application {
     val windowState = rememberWindowState()
     val viewModelProviderImpl = ViewModelProviderImpl()
     viewModelProviderImpl.getTabBarViewModel().addNewTab()
+    viewModelProviderImpl.getFileHandlerViewModel().load()
     Window(
         onCloseRequest = ::exitApplication,
         state = windowState,

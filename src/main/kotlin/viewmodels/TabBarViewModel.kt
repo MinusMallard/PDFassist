@@ -7,11 +7,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.nio.file.Path
 
 class TabBarViewModel : ViewModel() {
+    // Manages all the tabs opened
     private var _tabList = MutableStateFlow<MutableList<Tab>>(emptyList<Tab>().toMutableList())
     var tabList = _tabList.asStateFlow()
 
+    // Added this so that UI can know which tab is active
     private var _curActiveTab = MutableStateFlow<Int>(0)
     var curActiveTab = _curActiveTab.asStateFlow()
+
+    // Added this so that TabScreen can see whether pdf is open in the current file
+    private var _isLoaded = MutableStateFlow<Boolean>(false)
+    var isLoaded = _isLoaded.asStateFlow()
 
     companion object {
 
@@ -38,5 +44,11 @@ class TabBarViewModel : ViewModel() {
         if (tabNumber == 0) {}
         _tabList.value.removeAt(tabNumber)
         _curActiveTab.value--
+    }
+
+    fun openPDF(tabNumber: Int) {
+        val tab = _tabList.value.get(tabNumber);
+        tab.setIsLoaded();
+
     }
 }
