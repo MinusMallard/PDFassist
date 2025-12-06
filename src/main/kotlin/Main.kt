@@ -10,6 +10,7 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import ui.SettingScreen
+import ui.TabScreen
 import ui.tabBar
 import viewmodels.ViewModelProviderImpl
 
@@ -34,7 +35,9 @@ fun App(
                 if (isSettingsVisible) {
                     SettingScreen(viewModelProviderImp)
                 } else {
-
+                    TabScreen(
+                        viewModelProviderImp
+                    )
                 }
             }
             tabBar(
