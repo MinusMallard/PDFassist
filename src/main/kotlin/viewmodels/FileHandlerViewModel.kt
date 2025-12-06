@@ -7,19 +7,19 @@ import components.FileHandler
 import kotlinx.coroutines.flow.asStateFlow
 import java.nio.file.Path
 
-class FileHandlerViewModel(): ViewModel() {
-    private val fileHandler = FileHandler();
+class FileHandlerViewModel: ViewModel() {
+    private val fileHandler = FileHandler()
 
-    private val _paths = MutableStateFlow<List<String>>(emptyList());
-    val paths: StateFlow<List<String>> = _paths.asStateFlow();
+    private var _paths = MutableStateFlow<List<String>>(emptyList())
+    var paths: StateFlow<List<String>> = _paths.asStateFlow()
 
-    private val _files = MutableStateFlow<List<Path>>(emptyList());
-    val files: StateFlow<List<Path>> = _files.asStateFlow();
+    private var _files = MutableStateFlow<List<Path>>(emptyList())
+    var files: StateFlow<List<Path>> = _files.asStateFlow()
 
     companion object {
 
         @Volatile
-        private var instance: FileHandlerViewModel? = null;
+        private var instance: FileHandlerViewModel? = null
 
         fun getInstance(): FileHandlerViewModel {
             return instance?: synchronized(this) {
@@ -30,15 +30,15 @@ class FileHandlerViewModel(): ViewModel() {
 
     fun load() {
         viewModelScope.launch {
-            fileHandler.allDirectories;
-            fileHandler.searchInPaths();
-            getPaths();
-            getFiles();
+            fileHandler.allDirectories
+            fileHandler.searchInPaths()
+            getPaths()
+            getFiles()
         }
     }
 
-    fun getPaths() {
-            _paths.value = fileHandler.allDirectories;
+    private fun getPaths() {
+            _paths.value = fileHandler.allDirectories
     }
 
     fun getFiles() {
@@ -47,8 +47,8 @@ class FileHandlerViewModel(): ViewModel() {
 
     fun addPath(path: String) {
         viewModelScope.launch {
-            fileHandler.addDirectory(path);
-            getPaths();
+            fileHandler.addDirectory(path)
+            getPaths()
         }
     }
 }
