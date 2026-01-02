@@ -4,6 +4,7 @@ import components.PDF
 import components.Tab
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.awt.image.BufferedImage
 import java.nio.file.Path
 
 class TabBarViewModel : ViewModel() {
@@ -19,8 +20,9 @@ class TabBarViewModel : ViewModel() {
     private var _isLoaded = MutableStateFlow<Boolean>(false)
     var isLoaded = _isLoaded.asStateFlow()
 
+    /**This is like static in java I have created a instance which is visible from
+    every thread and is thread safe which is used to access the instance of the class**/
     companion object {
-
         @Volatile
         private var instance: TabBarViewModel? = null
 
@@ -46,9 +48,21 @@ class TabBarViewModel : ViewModel() {
         _curActiveTab.value--
     }
 
-    fun openPDF(tabNumber: Int) {
-        val tab = _tabList.value.get(tabNumber);
+    fun openPDF() {
+        val tab = _tabList.value.get(_curActiveTab.value);
         tab.setIsLoaded();
+    }
 
+    fun getIsTabLoaded(): Boolean {
+        return _tabList.value.get(_curActiveTab.value).getIsLoaded()
+    }
+
+    fun getPDFImage(pageNo: Int): BufferedImage? {
+        return try {
+            _tabList.value.get(_curActiveTab.value).loadImage(pageNo)
+        } catch (e: Exception) {
+            println("faced an exception during loading image number $pageNo. fun getPDFImage of TabBarViewModel")
+            null
+        }
     }
 }

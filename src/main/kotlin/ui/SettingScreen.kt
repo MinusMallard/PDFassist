@@ -23,9 +23,6 @@ fun SettingScreen(
 ) {
     var newPathValue by remember { mutableStateOf("") }
     val paths = viewModelProviderImpl.getFileHandlerViewModel().paths.collectAsState().value
-    LaunchedEffect(true) {
-        viewModelProviderImpl.getFileHandlerViewModel().getPaths()
-    }
     Column(
         modifier = Modifier
             .fillMaxSize()

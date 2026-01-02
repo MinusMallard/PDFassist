@@ -27,9 +27,16 @@ public class PDF {
 
     public BufferedImage loadPage(int pageNo) throws IOException {
         if (pageNo < 0 || pageNo >= pages) {return null;}
-        document = Loader.loadPDF(new RandomAccessReadBufferedFile(path));
-        renderer =  new PDFRenderer(document);
-        return renderer.renderImage(pageNo);
+        try {
+            document = Loader.loadPDF(new RandomAccessReadBufferedFile(path));
+            renderer =  new PDFRenderer(document);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            document.close();
+        }
 
+        return renderer.renderImage(pageNo);
     }
 }

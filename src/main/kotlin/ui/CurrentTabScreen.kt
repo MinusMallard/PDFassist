@@ -22,9 +22,9 @@ fun TabScreen(
 ) {
     val tabBarViewModel = viewModelProviderImpl.getTabBarViewModel()
 
-    if (tabBarViewModel.getTab()) {
-        ShowFiles(
-            viewModelProviderImpl = viewModelProviderImpl,
+    if (tabBarViewModel.getIsTabLoaded()) {
+        RenderPDF(
+            viewModelProviderImpl
         )
     } else {
         ShowFiles(
@@ -38,30 +38,32 @@ fun ShowFiles(
     viewModelProviderImpl: ViewModelProviderImpl
 ) {
     val files = viewModelProviderImpl.getFileHandlerViewModel().files.collectAsState().value
-    LaunchedEffect(true) {
+
+    LaunchedEffect(Unit) {
         viewModelProviderImpl.getFileHandlerViewModel().getFiles()
     }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
+
+    Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            items(files) {file ->
-                Row (
-                    modifier = Modifier
-                        .fillMaxWidth(),
+            items(files) { file ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(
-                        onClick = {},
+                        onClick = {
+                            viewModelProviderImpl.getTabBarViewModel().openPDF()
+                        },
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                        modifier = Modifier.heightIn(min = 24.dp)
                     ) {
                         Text(
                             text = file.toString().substringAfterLast("\\"),
                             fontSize = 12.sp,
-                            lineHeight = 10.sp,
+                            lineHeight = 14.sp, // Slightly increased to prevent clipping
                             color = Color.White,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -75,7 +77,7 @@ fun ShowFiles(
 
 @Composable
 fun RenderPDF(
-
+    viewModelProviderImpl: ViewModelProviderImpl
 ) {
 
 }
