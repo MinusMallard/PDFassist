@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import components.Tab
+import viewmodels.TabBarViewModel
 import viewmodels.ViewModelProviderImpl
 import viewmodels.WindowStateManagement
 
@@ -33,6 +34,7 @@ fun tabBar(
 ) {
     val tabList = viewModelProviderImpl.getTabBarViewModel().tabList.collectAsState().value
     val activeTabNumber = viewModelProviderImpl.getTabBarViewModel().curActiveTab.collectAsState().value
+    val tabBarViewModel = viewModelProviderImpl.getTabBarViewModel()
 
     Row(
         modifier = Modifier
@@ -56,7 +58,8 @@ fun tabBar(
                     },
                     onTabClick = {
                         viewModelProviderImpl.getTabBarViewModel().chooseTab(tabList.indexOf(tab))
-                    }
+                    },
+                    tabBarViewModel
                 )
             }
             item() {
@@ -95,7 +98,8 @@ fun ChromeTabItem(
     tab: Tab,
     isActive: Boolean,
     onCloseClick: () -> Unit,
-    onTabClick: () -> Unit
+    onTabClick: () -> Unit,
+    tabBarViewModel: TabBarViewModel
 ) {
     val backgroundColor = if (isActive) Color(0xFF323639) else Color.Transparent
     val contentColor = if (isActive) Color.White else Color(0xFFAAAAAA)
@@ -112,7 +116,7 @@ fun ChromeTabItem(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = tab.tabName,
+            text = tabBarViewModel.tabName.collectAsState().value,
             color = contentColor,
             fontSize = 12.sp,
             maxLines = 1,
