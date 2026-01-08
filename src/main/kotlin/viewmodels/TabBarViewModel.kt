@@ -1,16 +1,12 @@
 package viewmodels
 
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
-import components.PDF
 import components.Tab
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.awt.image.BufferedImage
 import java.nio.file.Path
 
 class TabBarViewModel : ViewModel() {
@@ -36,7 +32,7 @@ class TabBarViewModel : ViewModel() {
     private var _totalPages = MutableStateFlow(0);
     var totalPages = _totalPages.asStateFlow()
 
-    private var _tabName = MutableStateFlow("New Tab")
+    private var _tabName = MutableStateFlow(emptyList<String>().toMutableList());
     var tabName = _tabName.asStateFlow()
 
     /**This is like static in java I have created a instance which is visible from
@@ -65,6 +61,7 @@ class TabBarViewModel : ViewModel() {
         if (_isLoaded.value) {
             setTotalPages()
         }
+        setTabName()
         getPDFImageBitmap()
     }
 
@@ -76,15 +73,17 @@ class TabBarViewModel : ViewModel() {
         if (_tabList.value.size > 0) {
             getPDFImageBitmap()
         }
+        _tabName.value.removeAt(tabNumber)
 
     }
 
     fun openPDF(path: Path) {
-        val tab = _tabList.value.get(_curActiveTab.value);
+        val tab = _tabList.value[_curActiveTab.value];
         tab.setPath(path)
         setTotalPages()
         updateIsLoaded()
         getPDFImageBitmap()
+        setTabName()
     }
     private fun getPDFImageBitmap() {
         _bitmaps.value = emptyList<ImageBitmap>().toMutableList()
@@ -103,5 +102,10 @@ class TabBarViewModel : ViewModel() {
 
     private fun setTotalPages() {
         _totalPages.value = _tabList.value[_curActiveTab.value].totalPages
+    }
+
+    private fun setTabName() {
+        _tabName.value = emptyList<String>().toMutableList()
+        _tabName.value = _tabList.value.map { it.tabName }.toMutableList()
     }
 }

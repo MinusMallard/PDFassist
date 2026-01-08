@@ -41,6 +41,7 @@ public class Tab{
             this.pages = document.getNumberOfPages();
             System.out.println("Total number of pages in this pdf is "  + pages);
             this.end = pages;
+            this.tabName = path.toString().split("///")[path.toString().split("///").length-1];
         } catch (Exception e) {
             e.printStackTrace();
             throw e;

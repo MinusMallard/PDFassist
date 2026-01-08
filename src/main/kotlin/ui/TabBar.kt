@@ -22,8 +22,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import components.Tab
-import viewmodels.TabBarViewModel
 import viewmodels.ViewModelProviderImpl
 import viewmodels.WindowStateManagement
 
@@ -33,8 +31,8 @@ fun tabBar(
     windowStateManagement: WindowStateManagement
 ) {
     val tabList = viewModelProviderImpl.getTabBarViewModel().tabList.collectAsState().value
+    val tabName = viewModelProviderImpl.getTabBarViewModel().tabName.collectAsState().value
     val activeTabNumber = viewModelProviderImpl.getTabBarViewModel().curActiveTab.collectAsState().value
-    val tabBarViewModel = viewModelProviderImpl.getTabBarViewModel()
 
     Row(
         modifier = Modifier
@@ -51,7 +49,6 @@ fun tabBar(
         ) {
             items(tabList) { tab ->
                 ChromeTabItem(
-                    tab = tab,
                     isActive = activeTabNumber == tabList.indexOf(tab),
                     onCloseClick = {
                        viewModelProviderImpl.getTabBarViewModel().closeTab(tabList.indexOf(tab))
@@ -59,7 +56,7 @@ fun tabBar(
                     onTabClick = {
                         viewModelProviderImpl.getTabBarViewModel().chooseTab(tabList.indexOf(tab))
                     },
-                    tabBarViewModel
+                    tabName[tabList.indexOf(tab)]
                 )
             }
             item() {
@@ -95,15 +92,13 @@ fun tabBar(
 
 @Composable
 fun ChromeTabItem(
-    tab: Tab,
     isActive: Boolean,
     onCloseClick: () -> Unit,
     onTabClick: () -> Unit,
-    tabBarViewModel: TabBarViewModel
+    tabName: String
 ) {
     val backgroundColor = if (isActive) Color(0xFF323639) else Color.Transparent
     val contentColor = if (isActive) Color.White else Color(0xFFAAAAAA)
-
     val tabShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
     Row(
         modifier = Modifier
@@ -113,10 +108,10 @@ fun ChromeTabItem(
             .clickable { onTabClick() }
             .padding(horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = tabBarViewModel.tabName.collectAsState().value,
+            text = tabName,
             color = contentColor,
             fontSize = 12.sp,
             maxLines = 1,
